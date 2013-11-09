@@ -1,0 +1,92 @@
+﻿@model MyCropper.Models.WebImage.EditorInputModel
+@{
+    ViewBag.Title = "Editor";
+}
+@section HeaderSection
+{
+    <link href="/Content/jquery.Jcrop.css" rel="stylesheet" />
+    <script src="/Scripts/jquery-1.8.2.js"></script>
+    <script src="/Scripts/jquery.Jcrop.js"></script>
+    <script src="~/Scripts/jquery.Jcrop.js"></script>
+}
+<style type="text/css">
+    #cropPreview {
+        width: 620px;
+        height: 280px;
+        overflow: hidden;
+    }
+
+    #profileImageEditor {
+        border: 5px solid black;
+    }
+</style>
+<h2>Editor</h2>
+<div id="mainform">
+    @using (Html.BeginForm("EditImage", "Home", FormMethod.Post))
+    {
+        <div id="cropContainer">
+            <div id="cropDisplay">
+                <img src="/Images/Temp/@Model.Profile.ImageUrl" id="profileImageEditor" width="620"/>
+            </div>
+            <br />
+            <div id="cropPreview">
+                <img src="/Images/Temp/@Model.Profile.ImageUrl" id="preview" />
+            </div>
+        </div>
+        @Html.HiddenFor(x => x.Top)
+        @Html.HiddenFor(x => x.Left)
+        @Html.HiddenFor(x => x.Bottom)
+        @Html.HiddenFor(x => x.Right)
+        @Html.HiddenFor(x => x.Height)
+        @Html.HiddenFor(x => x.Width)
+        @Html.HiddenFor(x => x.Profile.ImageUrl)
+        <input type="submit" name="action" value="Crop" />
+    }
+</div>
+
+<script type="text/javascript">
+    console.log($("#profileImageEditor"));
+    $("#profileImageEditor").Jcrop({
+        onChange: showPreview,
+        onSelect: showPreview,
+        setSelect: [@Model.Top, @Model.Left, @Model.Right, @Model.Bottom],
+        aspectRatio: 2.2
+    });
+
+    function showPreview(coords) {
+
+        if (parseInt(coords.w) > 0) {
+            $("#Top").val(parseInt(coords.y));
+            $("#Left").val(parseInt(coords.x));
+            $("#Bottom").val(parseInt(coords.y2));
+            $("#Right").val(parseInt(coords.x2));
+            $("#Height").val(parseInt('@(Model.Height)'));
+            $("#Width").val(parseInt('@(Model.Width)'));
+
+            console.log("-----------------");
+            console.log("test");
+            console.log("Top :" + $("#Top").val());
+            console.log("Left :" + $("#Left").val());
+            console.log("Bottom :" + $("#Bottom").val());
+            console.log("Right :" + $("#Right").val());
+
+            //var width = '@(Model.Width)';
+            //var height = '@(Model.Height)';
+
+            var width = 620;
+            var height = (620 / '@(Model.Width)') * '@(Model.Height)';
+            //change this to the size you want
+            var rx = 620 / coords.w;
+            var ry = 280 / coords.h;
+
+            $("#preview").css({
+                width: Math.round(rx * width) + "px",
+                height: Math.round(ry * height) + "px",
+                marginLeft: "-" + Math.round(rx * coords.x) + "px",
+                marginTop: "-" + Math.round(ry * coords.y) + "px"
+            });
+        }
+    }
+</script>
+
+

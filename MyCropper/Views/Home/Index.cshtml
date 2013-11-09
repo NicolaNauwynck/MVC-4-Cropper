@@ -1,0 +1,15 @@
+﻿@model MyCropper.Models.ProfileViewModel
+@using Microsoft.Web.Helpers;
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Index</h2>
+
+@using (Html.BeginForm("UploadImage", "Home", FormMethod.Post, new { @encType = "multipart/form-data" }))
+{
+    @Html.DisplayFor(x => x.ImageUrl)<br />
+    <img src="/Images/News/@Model.ImageUrl"/><br />
+    <input type="text" name="ImageName" id="ImageName" />
+    @FileUpload.GetHtml(initialNumberOfFiles: 1, allowMoreFilesToBeAdded: false,includeFormTag: false, uploadText: "Upload File")<br />
+    <input type="submit" name="submit" text="upload" />
+}
